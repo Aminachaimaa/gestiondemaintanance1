@@ -117,83 +117,90 @@
 
 <div class="container hidden form-box" id="analyseapieu">
     <h1>La méthode PIEU </h1>
-    <p style="background-color: white; padding: 15px; border-radius: 10px; box-shadow: 0 0 8px rgba(0,0,0,0.1); color: noir;">
+    <p style="background-color: white; padding: 15px; border-radius: 10px; box-shadow: 0 0 8px rgba(0,0,0,0.1); color: black;">
         <strong>P</strong> – Incidence des pannes : Fiabilité de l’équipement<br>
         <br><strong>I</strong> – Importance : Impact sur l’activité médicale<br>
         <br><strong>E</strong> – État : Âge, précision et usure du matériel<br>
         <br><strong>U</strong> – Utilisation : Fréquence et nombre d’utilisateurs<br>
     </p>
-    <br><p style="background-color: white; padding: 15px; border-radius: 10px; box-shadow: 0 0 8px rgba(0,0,0,0.1); color: noir;"><strong>Formule :</strong> C = P × I × E × U</p>
+
+    <p style="background-color: white; padding: 15px; border-radius: 10px; box-shadow: 0 0 8px rgba(0,0,0,0.1); color: black;">
+        <strong>Formule :</strong> C = P × I × E × U
+    </p>
+
     <p><strong>Interprétation :</strong></p>
-    <ul>
-        <p style="background-color: white; padding: 15px; border-radius: 10px; box-shadow: 0 0 8px rgba(0,0,0,0.1); color: noie;"><span class="badge critique">C &lt; 1</span> : Critique<br>
+    <p style="background-color: white; padding: 15px; border-radius: 10px; box-shadow: 0 0 8px rgba(0,0,0,0.1); color: black;">
+        <span class="badge critique">C &lt; 1</span> : Critique<br>
         <span class="badge surveiller">1 ≤ C &lt; 10</span> : À Surveiller<br>
-        <span class="badge noncritique">C ≥ 10</span> : Non Critique</p>
-    </ul>
+        <span class="badge noncritique">C ≥ 10</span> : Non Critique
+    </p>
 
-<br><br><br> <h2>application</h2>
-<br><br>
-<div class="form-container">
-    <form id="pieuForm">
-        <label for="p">P – Incidence des pannes :</label>
-        <input type="number" id="p" min="0.01" max="3" step="0.01" required>
+    <h2>Application</h2>
 
-        <label for="i">I – Importance de l’équipement :</label>
-        <input type="number" id="i" min="0.01" max="3" step="0.01" required>
+    <div class="form-container">
+        <form id="pieuForm">
+            <label for="p">P – Incidence des pannes :</label>
+            <input type="number" id="p" min="0.01" max="3" step="0.01" required>
 
-        <label for="e">E – État de l’équipement :</label>
-        <input type="number" id="e" min="0.01" max="3" step="0.01" required>
+            <label for="i">I – Importance de l’équipement :</label>
+            <input type="number" id="i" min="0.01" max="3" step="0.01" required>
 
-        <label for="u">U – Taux d’utilisation :</label>
-        <input type="number" id="u" min="0.01" max="3" step="0.01" required>
+            <label for="e">E – État de l’équipement :</label>
+            <input type="number" id="e" min="0.01" max="3" step="0.01" required>
 
-        <button type="button" onclick="calculerPIEU()">Calculer la Criticité</button>
-    </form>
-	<button onclick="backToFormList()">Retour</button>
-</div>
+            <label for="u">U – Taux d’utilisation :</label>
+            <input type="number" id="u" min="0.01" max="3" step="0.01" required>
 
+            <button type="button" onclick="calculerPIEU()">Calculer la Criticité</button>
+        </form>
+        <button onclick="backToFormList()">Retour</button>
+    </div>
 
+    <div class="result form-container" id="result" style="display: none;">
+        <p><strong>Score de Criticité (C) :</strong> <span id="scoreC"></span></p>
+        <p><strong>Évaluation :</strong> <span id="evaluation"></span></p>
+    </div>
 
-<div class="result form-container" id="result" style="display: none;">
-    <p><strong>Score de Criticité (C) :</strong> <span id="scoreC"></span></p>
-    <p><strong>Évaluation :</strong> <span id="evaluation"></span></p>
-</div>
+    <script>
+        function calculerPIEU() {
+            const p = parseFloat(document.getElementById("p").value);
+            const i = parseFloat(document.getElementById("i").value);
+            const e = parseFloat(document.getElementById("e").value);
+            const u = parseFloat(document.getElementById("u").value);
 
-<script>
-    function calculerPIEU() {
-        const p = parseFloat(document.getElementById("p").value);
-        const i = parseFloat(document.getElementById("i").value);
-        const e = parseFloat(document.getElementById("e").value);
-        const u = parseFloat(document.getElementById("u").value);
+            console.log("Valeurs saisies => P:", p, "I:", i, "E:", e, "U:", u); // pour débug
 
-        if (isNaN(p) || isNaN(i) || isNaN(e) || isNaN(u)) {
-            alert("Veuillez remplir tous les champs avec des valeurs valides.");
-            return;
+            if (isNaN(p) || isNaN(i) || isNaN(e) || isNaN(u)) {
+                alert("Veuillez remplir tous les champs avec des valeurs valides.");
+                return;
+            }
+
+            const c = p * i * e * u;
+            let evaluation = "";
+            let badgeClass = "";
+
+            if (c < 1) {
+                evaluation = "Critique";
+                badgeClass = "critique";
+            } else if (c < 10) {
+                evaluation = "À Surveiller";
+                badgeClass = "surveiller";
+            } else {
+                evaluation = "Non Critique";
+                badgeClass = "noncritique";
+            }
+
+            document.getElementById("scoreC").innerText = c.toFixed(3);
+            document.getElementById("evaluation").innerHTML = `<span class="badge ${badgeClass}">${evaluation}</span>`;
+            document.getElementById("result").style.display = "block";
         }
 
-        const c = p * i * e * u;
-        let evaluation = "";
-        let badgeClass = "";
-
-        if (c < 1) {
-            evaluation = "Critique";
-            badgeClass = "critique";
-        } else if (c < 10) {
-            evaluation = "À Surveiller";
-            badgeClass = "surveiller";
-        } else {
-            evaluation = "Non Critique";
-            badgeClass = "noncritique";
+        function backToFormList() {
+            document.getElementById("analyseapieu").style.display = "none";
+            // ajoute ici ta logique pour afficher le menu principal par exemple
         }
-
-        document.getElementById("scoreC").innerText = c.toFixed(3);
-        document.getElementById("evaluation").innerHTML = `<span class="badge ${badgeClass}">${evaluation}</span>';
-        document.getElementById("result").style.display = "block";
-    }
-</script>
-            
+    </script>
 </div>
-
 
 
 
@@ -317,7 +324,7 @@
 
     <h3>✍️ Signatures :</h3>
     <p><strong>🛠️ Ingénieur de service :</strong> <input type="text" value="Ahmed Ammar Amina Chaimaa"></p>  
-    <p><strong>👤chef service :</strong> <input type="text" value="Dr. sid ahmed masoudi"></p>  
+    <p><strong>👤chef service :</strong> <input type="text" value="Dr. masoudi -s"></p>  
 
     <button onclick="backToFormList()">Retour</button>
 </div>
@@ -359,7 +366,7 @@
         <input type="text" name="rms_representative" value="M. Benbed Abdelwaheb" required><br><br>
 
         <label>👤 CHEF service :</label>
-        <input type="text" name="customer_signature" value="Dr. sid ahmed masoudi" required><br><br>
+        <input type="text" name="customer_signature" value="Dr.  masoudi-s" required><br><br>
 
         
     </form>
@@ -432,24 +439,24 @@
 		 <td><input type="text" value=" colonne coelioscopie"></td>
             
             
-            <td><input type="number" value="1300000" readonly></td>
+            <td><input type="number" value="14000000" readonly></td>
         </tr>
         <tr>
             <td><input type="text" value="🔧 maintanace "></td>
             
-            <td><input type="number" value="200000" readonly></td>
+            <td><input type="number" value="300000" readonly></td>
         </tr>
         <tr>
             <td><input type="text" value=" formation "></td>
             
             
-            <td><input type="number" value="100000" readonly></td>
+            <td><input type="number" value="200000" readonly></td>
         </tr>
         <tr>
             <td><input type="text" value=" autre tarification"></td>
            
             
-            <td><input type="number" value="100000" readonly></td>
+            <td><input type="number" value="200000" readonly></td>
 			
 			
 			</tr>
@@ -459,7 +466,7 @@
 
     <div class="form-group">
         <label>🧾 Total Général :</label>
-        <input type="number" value="1520000" readonly>
+        <input type="number" value="14700000" readonly>
     </div>
 
     
@@ -477,7 +484,7 @@
     </div>
     <div class="form-group">
         <label>👨‍⚕️ CHEF SERVICE :</label>
-        <input type="text" value="Dr. ZEGAN fatima">
+        <input type="text" value="Dr. ZEGAN -f">
     </div>
 
     <button onclick="backToFormList()">Retour</button>
@@ -597,7 +604,7 @@
         <p><strong>Objet :</strong> Achat et installation d’une colonne de cœlioscopie pour usage chirurgical minimalement invasif.</p>
         <p><strong>Destinataire :</strong> Service de chirurgie mini-invasive d'un hôpital ou d'une clinique.</p>
         <p><strong>Normes :</strong> La colonne doit être conforme aux normes CE Médical ISO 13485 et aux réglementations locales en vigueur.</p>
-        <p><strong>Budget :</strong> Le budget alloué est estimé entre 1500000 DA et 1550000 DA, en fonction des configurations et des options choisies.</p>
+        <p><strong>Budget :</strong> Le budget alloué est estimé entre 15000000 DA et 15500000 DA, en fonction des configurations et des options choisies.</p>
         <p><strong>Fournisseurs possibles :</strong> Olympus, Karl Storz, Stryker, Richard Wolf.</p>
 
         <h3>2. Spécifications Techniques</h3>
@@ -865,8 +872,8 @@
 
             <button type="submit">Confirmer la Livraison</button>
         </form>
-		<img src="p11.png" alt="صورة المستخدم" width="100"><br>
 		
+		<img src="p6.jpg" alt="Description de l'image">
 		<button onclick="backToFormList()">Retour</button>
     </div>
 
@@ -921,7 +928,7 @@
     <img src="p5.jpg" alt="Image Biomedical" style="margin-bottom: 50px; width: 300px; height: auto;">
     <img src="p9.jpg" alt="Image Biomedical" style="margin-bottom: 50px; width: 300px; height: auto;">
     <img src="p1a0.jpg" alt="Image Biomedical" style="width: 300px; height: auto;">
-</div
+</div>
 <button onclick="backToFormList()">Retour</button>	
     </div>
 	
